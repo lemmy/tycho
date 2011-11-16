@@ -68,6 +68,7 @@ import org.eclipse.tycho.core.utils.PlatformPropertiesUtils;
 import org.eclipse.tycho.equinox.EquinoxServiceFactory;
 import org.eclipse.tycho.p2.facade.internal.ReactorArtifactFacade;
 import org.eclipse.tycho.p2.metadata.DependencyMetadataGenerator;
+import org.eclipse.tycho.p2.metadata.DependencyMetadataGenerator.OptionalResolutionAction;
 import org.eclipse.tycho.p2.resolver.facade.P2ResolutionResult;
 import org.eclipse.tycho.p2.resolver.facade.P2Resolver;
 import org.eclipse.tycho.p2.resolver.facade.P2ResolverFactory;
@@ -112,14 +113,22 @@ public class P2TargetPlatformResolver extends AbstractTargetPlatformResolver imp
         TargetPlatformConfiguration configuration = (TargetPlatformConfiguration) project
                 .getContextValue(TychoConstants.CTX_TARGET_PLATFORM_CONFIGURATION);
         List<Map<String, String>> environments = getEnvironments(configuration);
-        Set<Object> metadata = generator
-                .generateMetadata(new ReactorArtifactFacade(reactorProject, null), environments);
+
+        OptionalResolutionAction optionalAction = OptionalResolutionAction.REQUIRE;
+
+        if (TargetPlatformConfiguration.OPTIONAL_RESOLUTION_IGNORE.equals(configuration.getOptionalResolutionAction())) {
+            optionalAction = OptionalResolutionAction.IGNORE;
+        }
+
+        Set<Object> metadata = generator.generateMetadata(new ReactorArtifactFacade(reactorProject, null),
+                environments, optionalAction);
         reactorProject.setDependencyMetadata(null, metadata);
 
         // TODO this should be moved to osgi-sources-plugin somehow
         if (isBundleProject(project) && hasSourceBundle(project)) {
             ReactorArtifactFacade sourcesArtifact = new ReactorArtifactFacade(reactorProject, "sources");
-            Set<Object> sourcesMetadata = sourcesGenerator.generateMetadata(sourcesArtifact, environments);
+            Set<Object> sourcesMetadata = sourcesGenerator.generateMetadata(sourcesArtifact, environments,
+                    optionalAction);
             reactorProject.setDependencyMetadata(sourcesArtifact.getClassidier(), sourcesMetadata);
         }
     }
