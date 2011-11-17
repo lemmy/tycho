@@ -8,27 +8,31 @@
  * Contributors:
  *    Sonatype Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tycho.test.tycho122;
+package org.eclipse.tycho.test.pomGenerator;
 
 import java.io.File;
 
 import junit.framework.Assert;
 
 import org.apache.maven.it.Verifier;
+import org.eclipse.tycho.core.utils.TychoVersion;
 import org.eclipse.tycho.test.AbstractTychoIntegrationTest;
 import org.junit.Test;
 
 public class Tycho122GeneratePomFileTest extends AbstractTychoIntegrationTest {
     @Test
     public void generatePom() throws Exception {
-        Verifier verifier = getVerifier("/tycho122/tycho.demo");
+        Verifier verifier = getVerifier("/pomGenerator/tycho.demo", false);
 
         verifier.setAutoclean(false);
-        verifier.executeGoal("org.eclipse.tycho:tycho-pomgenerator-plugin:generate-poms");
+        verifier.executeGoal("org.eclipse.tycho:tycho-pomgenerator-plugin:" + TychoVersion.getTychoVersion()
+                + ":generate-poms");
         verifier.verifyErrorFreeLog();
 
         File pom = new File(verifier.getBasedir(), "pom.xml");
         Assert.assertTrue("Must generate the pom.xml", pom.exists());
+
+        // TODO the content of the pom.xml is broken (bug 363908)
     }
 
 }
