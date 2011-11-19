@@ -29,6 +29,7 @@
 		<module>tycho-bundles-target</module>
 
 		<!-- facade between Maven and OSGi class loaders -->
+		<module>org.eclipse.tycho.embedder.facade</module>
 		<module>org.eclipse.tycho.p2.resolver.facade</module>
 		<module>org.eclipse.tycho.p2.tools.facade</module>
 
@@ -66,7 +67,7 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>tycho-bundles-target</artifactId>
 							<version>${project.version}</version>
-							<classifier>build</classifier>
+							<classifier>tycho</classifier>
 						</artifact>
 					</target>
 				</configuration>

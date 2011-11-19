@@ -42,6 +42,8 @@ public class TargetPlatformConfiguration {
 
     private String optionalAction;
 
+    private String executionEnvironment;
+
     /**
      * Returns the list of configured target environments, or the running environment if no
      * environments have been specified explicitly.
@@ -118,5 +120,13 @@ public class TargetPlatformConfiguration {
 
     public String getOptionalResolutionAction() {
         return optionalAction;
+    }
+
+    public String getExecutionEnvironment() {
+        return executionEnvironment;
+    }
+
+    public void setExecutionEnvironment(String executionEnvironment) {
+        this.executionEnvironment = executionEnvironment;
     }
 }
