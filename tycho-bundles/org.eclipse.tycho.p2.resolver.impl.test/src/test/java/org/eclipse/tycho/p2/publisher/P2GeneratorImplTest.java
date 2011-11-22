@@ -40,6 +40,7 @@ import org.eclipse.tycho.p2.metadata.DependencyMetadataGenerator;
 import org.eclipse.tycho.p2.metadata.DependencyMetadataGenerator.OptionalResolutionAction;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class P2GeneratorImplTest {
 
     @Test
@@ -154,5 +155,26 @@ public class P2GeneratorImplTest {
         assertNotNull(iu);
         List<IRequirement> requirements = new ArrayList<IRequirement>(iu.getRequirements());
         assertEquals(0, requirements.size());
+    }
+
+    @Test
+    public void testOptionalRequireBundleP2inf_REQUIRE() throws Exception {
+        DependencyMetadataGenerator generator = new DefaultDependencyMetadataGenerator();
+        File location = new File("resources/generator/optional-reqiure-bundle-p2inf").getCanonicalFile();
+        ArtifactMock artifactMock = new ArtifactMock(location, "optional-reqiure-bundle-p2inf",
+                "optional-reqiure-bundle-p2inf", "0.0.1", "eclipse-plugin");
+        Set<Object> units = generator.generateMetadata(artifactMock, getEnvironments(),
+                OptionalResolutionAction.REQUIRE);
+        assertEquals(1, units.size());
+        IInstallableUnit iu = getUnit("optional-reqiure-bundle-p2inf", units);
+        assertNotNull(iu);
+        List<IRequirement> requirements = new ArrayList<IRequirement>(iu.getRequirements());
+        assertEquals(1, requirements.size());
+        IRequiredCapability requirement = (IRequiredCapability) requirements.get(0);
+        assertTrue(requirement.isGreedy());
+        assertEquals(1, requirement.getMin());
+        assertEquals(1, requirement.getMax());
+        assertEquals(BundlesAction.CAPABILITY_NS_OSGI_BUNDLE, requirement.getNamespace());
+        assertEquals("org.eclipse.osgi", requirement.getName());
     }
 }
