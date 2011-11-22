@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import org.eclipse.tycho.core.facade.MavenLogger;
 import org.eclipse.tycho.p2.impl.MavenContextImpl;
-import org.eclipse.tycho.p2.tools.BuildContext;
+import org.eclipse.tycho.p2.tools.BuildOutputDirectory;
 import org.eclipse.tycho.p2.tools.FacadeException;
 import org.eclipse.tycho.p2.tools.RepositoryReferences;
 import org.eclipse.tycho.p2.tools.TargetEnvironment;
@@ -93,10 +93,8 @@ public class VerifierServiceImplTest {
     }
 
     private boolean verify(final RepositoryReferences repositories) throws FacadeException {
-        BuildContext context = new BuildContext(null, DEFAULT_ENVIRONMENTS, tempFolder.getRoot());
-
         return subject.verify(repositories.getMetadataRepositories().get(0), repositories.getArtifactRepositories()
-                .get(0), context);
+                .get(0), new BuildOutputDirectory(tempFolder.getRoot()));
     }
 
     static class MemoryLog implements MavenLogger {

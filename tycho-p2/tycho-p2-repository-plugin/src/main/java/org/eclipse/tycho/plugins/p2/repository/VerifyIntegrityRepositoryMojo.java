@@ -33,12 +33,12 @@ public class VerifyIntegrityRepositoryMojo extends AbstractRepositoryMojo implem
     private EquinoxServiceFactory p2;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File repositoryFile = new File(getBuildDirectory(), getProject().getArtifactId() + ".zip");
+        File repositoryFile = getBuildDirectory().getChild(getProject().getArtifactId() + ".zip");
         logger.info("Verifying " + repositoryFile.toString());
         VerifierService verifier = p2.getService(VerifierService.class);
-        URI repositoryUri = new File(getBuildDirectory(), "repository").toURI();
+        URI repositoryUri = getBuildDirectory().getChild("repository").toURI();
         try {
-            if (!verifier.verify(repositoryUri, repositoryUri, getBuildContext())) {
+            if (!verifier.verify(repositoryUri, repositoryUri, getBuildDirectory())) {
                 throw new MojoFailureException("The repository is invalid.");
             }
         } catch (FacadeException e) {
