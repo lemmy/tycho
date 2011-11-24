@@ -43,18 +43,11 @@
 			<artifactId>tycho-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.tycho</groupId>
 			<artifactId>tycho-equinox-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-compat</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>org.eclipse.tycho</groupId>
 			<artifactId>org.eclipse.tycho.p2.resolver.facade</artifactId>
@@ -78,7 +71,6 @@
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
-				<version>${plexusVersion}</version>
 				<executions>
 					<execution>
 						<goals>
