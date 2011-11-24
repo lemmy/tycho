@@ -21,7 +21,8 @@
 	</parent>
 	<artifactId>tycho-equinox-api</artifactId>
 
-	<name>Tycho Equinox Embedder API (Incubation)</name>
+	<name>Tycho Equinox Service Factory API (Incubation)</name>
+	<description>Interface for obtaining OSGi services in Maven.</description>
 
 	<build>
 		<plugins>

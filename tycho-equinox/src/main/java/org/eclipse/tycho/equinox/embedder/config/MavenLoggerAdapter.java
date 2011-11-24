@@ -8,7 +8,7 @@
  * Contributors:
  *    SAP AG - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tycho.osgi.adapters;
+package org.eclipse.tycho.equinox.embedder.config;
 
 import org.codehaus.plexus.logging.Logger;
 import org.eclipse.tycho.core.facade.MavenLogger;

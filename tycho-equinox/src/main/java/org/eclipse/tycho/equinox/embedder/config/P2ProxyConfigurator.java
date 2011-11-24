@@ -8,7 +8,7 @@
  * Contributors:
  *    Sonatype Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tycho.p2.facade.internal;
+package org.eclipse.tycho.equinox.embedder.config;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,7 +8,7 @@
  * Contributors:
  *     SAP AG - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tycho.p2.facade.internal;
+package org.eclipse.tycho.equinox.embedder.config;
 
 import java.io.File;
 
@@ -21,7 +21,6 @@ import org.eclipse.tycho.core.facade.MavenContext;
 import org.eclipse.tycho.core.internal.MutableMavenContext;
 import org.eclipse.tycho.equinox.embedder.EquinoxEmbedder;
 import org.eclipse.tycho.equinox.embedder.EquinoxLifecycleListener;
-import org.eclipse.tycho.osgi.adapters.MavenLoggerAdapter;
 
 @Component(role = EquinoxLifecycleListener.class, hint = "MavenContextConfigurator")
 public class MavenContextConfigurator extends EquinoxLifecycleListener {

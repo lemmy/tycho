@@ -22,16 +22,20 @@
 	<artifactId>tycho-equinox</artifactId>
 
 	<name>Tycho Equinox Embedder (Incubation)</name>
+	<description>Implementation classes for embedding and configuring the Equinox OSGi runtime for Tycho. Provides an implementation for the tycho-equinox-api.</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-component-annotations</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.sonatype.sisu</groupId>
 			<artifactId>sisu-inject-plexus</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
 		</dependency>
 
 		<dependency>
@@ -43,6 +47,11 @@
 			<artifactId>tycho-equinox-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.tycho</groupId>
+			<artifactId>org.eclipse.tycho.p2.resolver.facade</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -50,7 +59,6 @@
 			<plugin>
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
-				<version>${plexusVersion}</version>
 				<executions>
 					<execution>
 						<goals>

@@ -8,7 +8,7 @@
  * Contributors:
  *    Sonatype Inc. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.tycho.equinox.embedder;
+package org.eclipse.tycho.equinox.embedder.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,8 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.eclipse.core.runtime.adaptor.EclipseStarter;
 import org.eclipse.tycho.equinox.EquinoxRuntimeLocator;
 import org.eclipse.tycho.equinox.EquinoxServiceFactory;
+import org.eclipse.tycho.equinox.embedder.EquinoxEmbedder;
+import org.eclipse.tycho.equinox.embedder.EquinoxLifecycleListener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
