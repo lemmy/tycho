@@ -24,6 +24,10 @@ public class TychoBundleAction extends BundlesAction {
         super(new File[] { location });
     }
 
+    public TychoBundleAction(BundleDescription bundleDescription) {
+        super(new BundleDescription[] { bundleDescription });
+    }
+
     @Override
     protected BundleDescription[] getBundleDescriptions(File[] bundleLocations, IProgressMonitor monitor) {
         /*

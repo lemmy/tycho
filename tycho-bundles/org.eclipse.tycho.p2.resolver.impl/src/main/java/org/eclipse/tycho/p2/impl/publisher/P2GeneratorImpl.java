@@ -31,7 +31,6 @@ import org.eclipse.equinox.p2.publisher.IPublisherAdvice;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.equinox.p2.publisher.actions.IFeatureRootAdvice;
-import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 import org.eclipse.equinox.p2.publisher.eclipse.ProductAction;
@@ -185,7 +184,7 @@ public class P2GeneratorImpl extends AbstractMetadataGenerator implements P2Gene
                 }
             }
         } else if (location.isFile() && location.getName().endsWith(".jar")) {
-            actions.add(new BundlesAction(new File[] { location }));
+            actions.add(new TychoBundleAction(location));
         } else {
             throw new IllegalArgumentException("Unknown type of packaging " + packaging);
         }
