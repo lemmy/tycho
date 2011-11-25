@@ -35,6 +35,9 @@ public final class DirectorMojo extends AbstractProductMojo {
     /** @parameter default-value="DefaultProfile" */
     private String profile;
 
+    /* @parameter */
+    private List<ProfileName> profileNames;
+
     /** @parameter default-value="true" */
     private boolean installFeatures;
 
@@ -65,7 +68,7 @@ public final class DirectorMojo extends AbstractProductMojo {
                         "-artifactrepository", artifactRepositoryURLs, //
                         "-installIU", product.getId(), //
                         "-destination", destination.getAbsolutePath(), //
-                        "-profile", profile, //
+                        "-profile", ProfileName.getNameForEnvironment(env, profileNames, profile), //
                         "-profileProperties", "org.eclipse.update.install.features=" + String.valueOf(installFeatures), //
                         "-roaming", //
                         "-p2.os", env.getOs(), "-p2.ws", env.getWs(), "-p2.arch", env.getArch() };
