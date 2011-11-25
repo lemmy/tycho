@@ -123,9 +123,9 @@ public class P2GeneratorImpl extends AbstractMetadataGenerator implements P2Gene
         File location = artifact.getLocation();
         if (P2Resolver.TYPE_ECLIPSE_PLUGIN.equals(packaging) || P2Resolver.TYPE_ECLIPSE_TEST_PLUGIN.equals(packaging)) {
             if (dependenciesOnly && optionalAction != null) {
-                actions.add(new BundleDependenciesAction(new File[] { location }, optionalAction));
+                actions.add(new BundleDependenciesAction(location, optionalAction));
             } else {
-                actions.add(new BundlesAction(new File[] { location }));
+                actions.add(new TychoBundleAction(location));
             }
         } else if (P2Resolver.TYPE_ECLIPSE_FEATURE.equals(packaging)) {
             Feature feature = new FeatureParser().parse(location);

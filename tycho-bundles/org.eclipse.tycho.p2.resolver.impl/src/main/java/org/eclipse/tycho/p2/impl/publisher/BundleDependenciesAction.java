@@ -20,8 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.metadata.IRequirement;
 import org.eclipse.equinox.p2.metadata.MetadataFactory;
@@ -32,7 +30,6 @@ import org.eclipse.equinox.p2.publisher.AdviceFileAdvice;
 import org.eclipse.equinox.p2.publisher.AdviceFileParser;
 import org.eclipse.equinox.p2.publisher.IPublisherInfo;
 import org.eclipse.equinox.p2.publisher.actions.ICapabilityAdvice;
-import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -41,7 +38,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.tycho.p2.metadata.DependencyMetadataGenerator.OptionalResolutionAction;
 
 @SuppressWarnings("restriction")
-public class BundleDependenciesAction extends BundlesAction {
+public class BundleDependenciesAction extends TychoBundleAction {
 
     /**
      * If true, treat optional Import-Package and Require-Bundle as required. If false, optional
@@ -49,33 +46,9 @@ public class BundleDependenciesAction extends BundlesAction {
      */
     private final OptionalResolutionAction optionalAction;
 
-    public BundleDependenciesAction(File[] locations, OptionalResolutionAction optionalAction) {
-        super(locations);
+    public BundleDependenciesAction(File location, OptionalResolutionAction optionalAction) {
+        super(location);
         this.optionalAction = optionalAction;
-    }
-
-    @Override
-    protected BundleDescription[] getBundleDescriptions(File[] bundleLocations, IProgressMonitor monitor) {
-        /*
-         * For reasons that I don't quite understand, p2 publisher BundlesAction generates two IUs
-         * for org.eclipse.update.configurator bundle, the extra IU matching
-         * org.eclipse.equinox.simpleconfigurator bundle. The extra IU results in wrong target
-         * platform resolution for projects that depend on org.eclipse.equinox.simpleconfigurator
-         * bundle or packages provided by it.
-         * 
-         * The solution is to suppress special handling of org.eclipse.update.configurator bundle
-         * when generating p2 metadata of reactor projects and from what I can tell, this is
-         * consistent with PDE behaviour (see
-         * org.eclipse.pde.internal.build.publisher.GatherBundleAction ).
-         */
-
-        BundleDescription[] result = new BundleDescription[bundleLocations.length];
-        for (int i = 0; i < bundleLocations.length; i++) {
-            if (monitor.isCanceled())
-                throw new OperationCanceledException();
-            result[i] = createBundleDescription(bundleLocations[i]);
-        }
-        return result;
     }
 
     @Override
