@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.metadata.VersionRange;
+import org.eclipse.equinox.p2.query.CollectionResult;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.IQueryable;
@@ -45,6 +47,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.tycho.core.facade.MavenLogger;
+import org.eclipse.tycho.p2.impl.resolver.ResolutionContextImpl;
 import org.eclipse.tycho.p2.target.facade.TargetDefinition;
 import org.eclipse.tycho.p2.target.facade.TargetDefinition.IncludeMode;
 import org.eclipse.tycho.p2.target.facade.TargetDefinition.InstallableUnitLocation;
@@ -59,6 +62,7 @@ import org.eclipse.tycho.p2.util.StatusTool;
  * TODO respect target execution environment profile. Current implementation assumes current JRE and
  * will select wrong installable units for restricted target profiles like OSGi/Minimum-1.0
  */
+@SuppressWarnings("restriction")
 public class TargetDefinitionResolver {
     private static final IInstallableUnit[] EMPTY_IU_ARRAY = new IInstallableUnit[0];
 
@@ -68,8 +72,12 @@ public class TargetDefinitionResolver {
 
     private final List<Map<String, String>> environments;
 
-    public TargetDefinitionResolver(List<Map<String, String>> environments, IProvisioningAgent agent, MavenLogger logger) {
+    private final Collection<IInstallableUnit> jreUIs;
+
+    public TargetDefinitionResolver(List<Map<String, String>> environments, Collection<IInstallableUnit> jreUIs,
+            IProvisioningAgent agent, MavenLogger logger) {
         this.environments = environments;
+        this.jreUIs = jreUIs;
         this.logger = logger;
         this.metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
     }
@@ -143,7 +151,10 @@ public class TargetDefinitionResolver {
             final Collection<IInstallableUnit> resolvedUnits;
             switch (includeMode) {
             case PLANNER:
+                availableUnits.add(new CollectionResult<IInstallableUnit>(jreUIs));
+                seedUnits.addAll(jreUIs);
                 resolvedUnits = resolveWithPlanner();
+                resolvedUnits.removeAll(jreUIs);
                 break;
             case SLICER:
                 resolvedUnits = resolveWithSlicer();
@@ -170,7 +181,6 @@ public class TargetDefinitionResolver {
             return result;
         }
 
-        @SuppressWarnings("restriction")
         private Set<IInstallableUnit> sliceForPlatform(List<IInstallableUnit> seedUnits,
                 IQueryable<IInstallableUnit> availableUnits, Map<String, String> selectionContext) {
             NullProgressMonitor monitor = new NullProgressMonitor();
@@ -212,7 +222,6 @@ public class TargetDefinitionResolver {
         }
 
         // TODO share this code with ProjectorResolutionStrategy
-        @SuppressWarnings("restriction")
         private Collection<IInstallableUnit> planForPlatform(List<IInstallableUnit> seedUnits,
                 IQueryable<IInstallableUnit> availableUnits, Map<String, String> selectionContext) {
             IProgressMonitor monitor = new NullProgressMonitor();
@@ -225,7 +234,18 @@ public class TargetDefinitionResolver {
                         StatusTool.findException(slicer.getStatus()));
             }
 
-            Projector projector = new Projector(slice, selectionContext, new HashSet<IInstallableUnit>(), false);
+            // filter out rouge a.jre IUs
+            ArrayList<IInstallableUnit> filteredSlice = new ArrayList<IInstallableUnit>();
+            Iterator<IInstallableUnit> sliceIter = slice.query(QueryUtil.ALL_UNITS, monitor).iterator();
+            while (sliceIter.hasNext()) {
+                IInstallableUnit iu = sliceIter.next();
+                if (!ResolutionContextImpl.isJREUI(iu) || jreUIs.contains(iu)) {
+                    filteredSlice.add(iu);
+                }
+            }
+
+            Projector projector = new Projector(new CollectionResult<IInstallableUnit>(filteredSlice),
+                    selectionContext, new HashSet<IInstallableUnit>(), false);
             projector.encode(createMetaIU(seedUnits), EMPTY_IU_ARRAY /* alreadyExistingRoots */, new QueryableArray(
                     EMPTY_IU_ARRAY) /* installed IUs */, seedUnits /* newRoots */, monitor);
             IStatus s = projector.invokeSolver(monitor);

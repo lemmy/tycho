@@ -344,7 +344,7 @@ public class ResolutionContextImpl implements ResolutionContext {
 
     public void addTargetDefinition(TargetDefinition definition, List<Map<String, String>> environments)
             throws TargetDefinitionSyntaxException, TargetDefinitionResolutionException {
-        TargetDefinitionResolver resolver = new TargetDefinitionResolver(environments, agent, logger);
+        TargetDefinitionResolver resolver = new TargetDefinitionResolver(environments, getJREIUs(), agent, logger);
         content.add(resolver.resolveContent(definition));
     }
 
@@ -464,7 +464,7 @@ public class ResolutionContextImpl implements ResolutionContext {
         }
     }
 
-    private boolean isJREUI(IInstallableUnit iu) {
+    public static boolean isJREUI(IInstallableUnit iu) {
         // See JREAction
         return iu.getId().startsWith("a.jre") || iu.getId().startsWith("config.a.jre");
     }
@@ -498,6 +498,13 @@ public class ResolutionContextImpl implements ResolutionContext {
      * Return IUs that represent packages provided by target JRE
      */
     public Collection<IInstallableUnit> getJREIUs() {
+        return getJREIUs(executionEnvironment);
+    }
+
+    /**
+     * @noreference this method is meant for unit tests and can be chanhed or removed without notice
+     */
+    public static Collection<IInstallableUnit> getJREIUs(String executionEnvironment) {
         PublisherResult results = new PublisherResult();
         new JREAction(executionEnvironment).perform(new PublisherInfo(), results, new NullProgressMonitor());
         return results.query(QueryUtil.ALL_UNITS, new NullProgressMonitor()).toUnmodifiableSet();

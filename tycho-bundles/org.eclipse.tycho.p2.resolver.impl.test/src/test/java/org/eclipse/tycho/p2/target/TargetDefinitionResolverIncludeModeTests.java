@@ -20,12 +20,15 @@ import static org.eclipse.tycho.p2.target.TargetDefinitionResolverTest.versioned
 import static org.eclipse.tycho.p2.target.TargetDefinitionResolverTest.versionedIdsOf;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IVersionedId;
+import org.eclipse.tycho.p2.impl.resolver.ResolutionContextImpl;
 import org.eclipse.tycho.p2.impl.test.MavenLoggerStub;
 import org.eclipse.tycho.p2.target.TargetDefinitionResolverTest.LocationStub;
 import org.eclipse.tycho.p2.target.TargetDefinitionResolverTest.TestRepositories;
@@ -44,13 +47,14 @@ public class TargetDefinitionResolverIncludeModeTests {
     public P2Context p2Context = new P2Context();
 
     private TargetDefinitionResolver subject;
+    private Collection<IInstallableUnit> jreUIs = ResolutionContextImpl.getJREIUs(null);
 
     @Before
     public void initContext() throws Exception {
         Map<String, String> emptyMap = new HashMap<String, String>();
         List<Map<String, String>> environments = Collections.singletonList(emptyMap);
 
-        subject = new TargetDefinitionResolver(environments, p2Context.getAgent(), new MavenLoggerStub());
+        subject = new TargetDefinitionResolver(environments, jreUIs, p2Context.getAgent(), new MavenLoggerStub());
     }
 
     @Test
@@ -66,7 +70,8 @@ public class TargetDefinitionResolverIncludeModeTests {
         TargetDefinition definition = definitionWith(new PlannerLocationStub(TestRepositories.UNSATISFIED, MAIN_BUNDLE));
         Map<String, String> emptyMap = new HashMap<String, String>();
         List<Map<String, String>> environments = Collections.singletonList(emptyMap);
-        subject = new TargetDefinitionResolver(environments, p2Context.getAgent(), new MavenLoggerStub(false, false));
+        subject = new TargetDefinitionResolver(environments, jreUIs, p2Context.getAgent(), new MavenLoggerStub(false,
+                false));
         subject.resolveContent(definition);
     }
 
